@@ -1,6 +1,7 @@
 import time
 import serial
 import asyncio
+import os
 from servo import Servo
 from firebase import Firebase
 
@@ -13,7 +14,10 @@ ser = serial.Serial("/dev/ttyACM0",9600)
 ser.baudrate=9600
 
 # Setup firebase
-firebase = Firebase('./firebase.json')
+# Build file path
+CURRENT_FOLDER = os.path.dirname(os.path.abspath(__file__))
+config_file = os.path.join(CURRENT_FOLDER, 'firebase.json')
+firebase = Firebase(config_file)
 firebase.run()
 
 '''
