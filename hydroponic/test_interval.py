@@ -1,5 +1,4 @@
 import time
-from datetime import datetime
 from timer import Timer
 
 def fishFeeder():

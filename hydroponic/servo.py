@@ -29,3 +29,7 @@ class Servo():
     # Rotate servo to center
     def rotateCenter(self):
         self.pwm_channel.ChangeDutyCycle(Servo.CENTRE)
+
+    @staticmethod
+    def cleanupGPIO():
+        GPIO.cleanup()
