@@ -19,6 +19,7 @@ if __name__ == '__main__':
     timer = Timer()
     while True:
         try:
+            print(timer.getSecondsDiff())
             pHSensor()
             if (timer.getSecondsDiff() == 10):
                 timer.resetInterval()
