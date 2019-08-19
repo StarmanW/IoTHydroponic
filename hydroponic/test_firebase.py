@@ -14,5 +14,5 @@ for i in range(0, 20):
     firebase.pushData({
         "pHValue": 6.25,
         "timestamp": json.dumps(datetime.datetime.now(), default=str)
-    })
+    }, 3)
     time.sleep(1)

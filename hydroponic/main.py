@@ -15,8 +15,8 @@ alkaliAmount = 1000
 foodAmount = 2000
 
 # Servo pin declaration
-feed_servo = Servo(22)
-pH_servo = Servo(18)
+feed_servo = Servo(18)
+pH_servo = Servo(22)
 
 # Change ACM number as found from "ls /dev/tty/ACM*"
 ser = serial.Serial("/dev/ttyACM0", 9600)
@@ -57,7 +57,7 @@ def pHSensor():
 
         read_serial = ser.readline()
         pHValue = float(read_serial.decode().strip())
-        print(str(pHValue))
+        print("PH Value = {}".format(pHValue))
 
         if (pHValue > 0.0 and pHValue < 14.0):
             if (pHValue <= 6.0):
@@ -78,8 +78,7 @@ def pHSensor():
                 "acidAmount": acidAmount, 
                 "alkaliAmount": alkaliAmount
             }
-    except Exception as ex:
-        print(ex);
+    except Exception:
         print("Something went wrong with the pH sensor module.")
 
 def pushDataToFirebase():

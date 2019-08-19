@@ -30,6 +30,5 @@ class Servo():
     def rotateCenter(self):
         self.pwm_channel.ChangeDutyCycle(Servo.CENTRE)
 
-    @staticmethod
-    def cleanupGPIO():
+    def cleanupGPIO(self):
         GPIO.cleanup()

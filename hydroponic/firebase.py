@@ -34,6 +34,6 @@ class Firebase():
         self.db = self.firebase.database()
 
     # Push data up to firebase
-    def pushData(self, data=None):
+    def pushData(self, data=None, hydroInstance=1):
         # Pass the user's idToken to the push method
-        return self.db.child(self.config["tableName"]).push(data, self.user["idToken"])
+        return self.db.child("{}-{}".format(self.config["tableName"], hydroInstance)).push(data, self.user["idToken"])
