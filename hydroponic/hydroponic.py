@@ -56,9 +56,6 @@ class Hydroponic():
                 self.cleanup()
                 break
 
-    def checkTimerOver(self, timer):
-        return timer.getSecondsDiff() == self.feederInterval or timer.getSecondsDiff() > self.feederInterval
-
     def feeder(self):
         try:
             self.feederServo.rotateRight()
@@ -69,20 +66,18 @@ class Hydroponic():
             # Update food amount
             self.foodAmount = self.foodAmount - self.foodRate
             self.data["feeder"] = {
-                "status": "Activated",
+                "status": "Active",
                 "amount": self.foodAmount
             }
         except Exception:
             print("Something went wrong with the fish feeder module.")
     
-    def blinkLed(self):
-        digitalWrite(self.led, 1)
-        time.sleep(1)       
-        digitalWrite(self.led, 0)
-        time.sleep(1)
-
     def pHSensor(self):
             try:
+                prevPHValue = 0.0
+                acidStatus = "Inactive"
+                alkaliStatus = "Inactive"
+
                 read_serial = self.ser.readline()
                 pHValue = float(read_serial.decode().strip())
                 print("{}. PH Value = {}".format(self.config["id"], pHValue))
@@ -94,10 +89,13 @@ class Hydroponic():
                     if (pHValue <= 6.0):
                         self.pHServo.rotateLeft()
                         self.acidAmount = self.acidAmount - self.acidRate
+                        acidStatus = "Active"
                     elif (pHValue >= 8.0):
                         self.pHServo.rotateRight()
                         self.alkaliAmount = self.alkaliAmount - self.alkaliRate
+                        alkaliStatus = "Active"
 
+                    prevPHValue = pHValue
                     time.sleep(0.5)
 
                     # Reset servo to center
@@ -108,19 +106,41 @@ class Hydroponic():
                         "pHValue": pHValue,
                         "acidAmount": self.acidAmount,
                         "alkaliAmount": self.alkaliAmount
+                        "acidStatus": acidStatus,
+                        "alkaliStatus": alkaliStatus
                     }
                 else:
-                    self.data["pH"] = ""
+                    self.data["pH"] = {
+                        "pHValue": prevPHValue,
+                        "acidAmount": self.acidAmount,
+                        "alkaliAmount": self.alkaliAmount,
+                        "acidStatus": acidStatus,
+                        "alkaliStatus": alkaliStatus
+                    }
             except Exception:
                 print("Something went wrong with the pH sensor module.")
 
     def pushDataToFirebase(self):
+        defaultFeederData = {
+            "status": "Inactive"
+            "amount": self.foodAmount
+        }
+        
         self.firebase.pushData({
             "pH": self.data["pH"],
-            "feeder": self.data["feeder"] if "feeder" in self.data else "",
+            "feeder": self.data["feeder"] if "feeder" in self.data else defaultFeederData,
             "timestamp": json.dumps(datetime.now(), default=str)
         })
         self.data.clear()
+
+    def checkTimerOver(self, timer):
+        return timer.getSecondsDiff() == self.feederInterval or timer.getSecondsDiff() > self.feederInterval
+
+    def blinkLed(self):
+        digitalWrite(self.led, 1)
+        time.sleep(1)       
+        digitalWrite(self.led, 0)
+        time.sleep(1)
 
     def cleanup(self):
         self.pHServo.rotateCenter()
