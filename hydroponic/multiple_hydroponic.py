@@ -2,6 +2,7 @@ import json
 import os
 from firebase import Firebase
 from hydroponic import Hydroponic
+from multiprocessing import Process
 
 # Setup firebase
 # Build file path
@@ -16,6 +17,11 @@ if __name__ == '__main__':
         config = json.load(json_file)
 
     hydroponics = {}
+    processes = {}
     for i in range(len(config["hydroponics"])):
         hydroponics[i] = Hydroponic(config["hydroponics"][i], firebase)
-        hydroponics[i].run()
+        processes[i] = Process(target=hydroponics[i].run)
+        processes[i].start()
+        
+    for p in processes:
+        p.join()

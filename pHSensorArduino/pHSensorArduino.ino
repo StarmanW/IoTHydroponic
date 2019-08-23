@@ -31,7 +31,7 @@ void loop()
 	for (int i = 2; i < 8; i++)
 		avgValue += buf[i];
 	float pHVol = (float)avgValue * 5.0 / 1024 / 6;
-	float phValue = -5.70 * pHVol + 21.34; // 21.34 default
+	float phValue = -5.70 * pHVol + 26.00; // 21.34 default
 //	Serial.print("pH Value = ");
 	Serial.println(phValue);
 	delay(1000);
