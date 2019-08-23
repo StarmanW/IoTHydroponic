@@ -24,8 +24,8 @@ class Hydroponic():
         self.foodAmount = self.config["foodAmount"]
 
         # Set rate for solutions and food
-        self.acidRate = self.config["alkaliAmount"]
-        self.alkaliRate = self.config["alkaliAmount"]
+        self.acidRate = self.config["acidRate"]
+        self.alkaliRate = self.config["alkaliRate"]
         self.foodRate = self.config["foodRate"]
 
         # Setup servos
