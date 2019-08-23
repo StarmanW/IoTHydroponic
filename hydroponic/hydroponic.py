@@ -45,7 +45,7 @@ class Hydroponic():
                 self.pHSensor()
                 if (self.foodAmount < 0):
                     self.blinkLed()
-                if ((timer.getSecondsDiff() == self.feederInterval or timer.getSecondsDiff() > self.feederInterval) and self.foodAmount > 0):
+                if (self.checkTimerOver(timer) and self.foodAmount > 0):
                     timer.resetInterval()
                     self.feeder()
                 self.pushDataToFirebase()
@@ -56,20 +56,22 @@ class Hydroponic():
                 self.cleanup()
                 break
 
+    def checkTimerOver(self, timer):
+        return timer.getSecondsDiff() == self.feederInterval or timer.getSecondsDiff() > self.feederInterval
+
     def feeder(self):
         try:
-            if (self.foodAmount > 0):
-                self.feederServo.rotateRight()
-                time.sleep(0.5)
-                self.feederServo.rotateCenter()
-                time.sleep(0.5)
+            self.feederServo.rotateRight()
+            time.sleep(0.5)
+            self.feederServo.rotateCenter()
+            time.sleep(0.5)
 
-                # Update food amount
-                self.foodAmount = self.foodAmount - self.foodRate
-                self.data["feeder"] = {
-                    "status": "Activated",
-                    "amount": self.foodAmount
-                }
+            # Update food amount
+            self.foodAmount = self.foodAmount - self.foodRate
+            self.data["feeder"] = {
+                "status": "Activated",
+                "amount": self.foodAmount
+            }
         except Exception:
             print("Something went wrong with the fish feeder module.")
     
