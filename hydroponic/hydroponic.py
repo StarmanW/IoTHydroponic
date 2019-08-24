@@ -2,7 +2,6 @@ import time
 import serial
 import os
 import json
-from datetime import datetime
 from servo import Servo
 from firebase import Firebase
 from timer import Timer
@@ -105,7 +104,7 @@ class Hydroponic():
                     self.data["pH"] = {
                         "pHValue": pHValue,
                         "acidAmount": self.acidAmount,
-                        "alkaliAmount": self.alkaliAmount
+                        "alkaliAmount": self.alkaliAmount,
                         "acidStatus": acidStatus,
                         "alkaliStatus": alkaliStatus
                     }
@@ -122,14 +121,14 @@ class Hydroponic():
 
     def pushDataToFirebase(self):
         defaultFeederData = {
-            "status": "Inactive"
+            "status": "Inactive",
             "amount": self.foodAmount
         }
         
         self.firebase.pushData({
             "pH": self.data["pH"],
             "feeder": self.data["feeder"] if "feeder" in self.data else defaultFeederData,
-            "timestamp": json.dumps(datetime.now(), default=str)
+            "timestamp": round(time.time() * 1000)
         })
         self.data.clear()
 
